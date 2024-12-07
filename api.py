@@ -11,7 +11,7 @@ def scan():
 
     try:
         result = subprocess.check_output(
-            ['python3', '/opt/theHarvester/theHarvester.py', '-d', domain, '-b', tool],
+            ['python', '/opt/theHarvester/theHarvester.py', '-d', domain, '-b', tool],
             text=True
         )
         return jsonify({"status": "success", "output": result})
