@@ -8,7 +8,7 @@ RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
 RUN pip install -r /opt/theHarvester/requirements.txt
 
-COPY api.py /opt/theHarvester
+COPY api.py /app
 
 WORKDIR /app
 
