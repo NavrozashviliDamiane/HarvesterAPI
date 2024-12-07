@@ -14,4 +14,4 @@ WORKDIR /app
 
 EXPOSE 5000
 
-ENTRYPOINT ["python3", "app.py"]
+ENTRYPOINT ["python3", "api.py"]
