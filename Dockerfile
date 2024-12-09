@@ -7,7 +7,7 @@ WORKDIR /opt/myapp
 # Install necessary system packages and Python dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git && \
-    pip install --no-cache-dir flask flask-socketio eventlet && \
+    pip install --no-cache-dir flask flask-socketio eventlet gunicorn && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
