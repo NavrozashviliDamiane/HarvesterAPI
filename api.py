@@ -1,3 +1,4 @@
+# Import eventlet and monkey patch before any other imports
 import eventlet
 eventlet.monkey_patch()
 
