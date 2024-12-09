@@ -11,6 +11,12 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+
+ENV PYTHONUNBUFFERED=1
+
+# Or optionally, if you want to be explicit about monkey patching
+ENV EVENTLET_MONKEY_PATCH=1
+
 # Copy the Flask WebSocket application file into the container
 COPY api.py .
 
