@@ -7,7 +7,7 @@ WORKDIR /opt/theHarvester
 RUN apt-get update && apt-get install -y --no-install-recommends git && \
     git clone https://github.com/laramies/theHarvester.git /opt/theHarvester && \
     pip install --no-cache-dir -r /opt/theHarvester/requirements.txt && \
-    pip install --no-cache-dir flask flask-socketio eventlet && \
+    pip install --no-cache-dir flask flask-socketio eventlet os && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

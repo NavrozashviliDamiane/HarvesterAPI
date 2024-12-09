@@ -4,6 +4,7 @@ eventlet.monkey_patch()
 from flask import Flask
 from flask_socketio import SocketIO, emit
 import subprocess
+import os  # Import the os module
 
 # Initialize Flask and Flask-SocketIO
 app = Flask(__name__)
