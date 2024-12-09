@@ -11,8 +11,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Python environment variable
-ENV PYTHONUNBUFFERED=1
+# Clone theHarvester repository and install its dependencies
+WORKDIR /opt/theHarvester
+RUN git clone https://github.com/laramies/theHarvester.git . && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Set the working directory back to the app
+WORKDIR /opt/myapp
 
 # Copy the Flask WebSocket application file into the container
 COPY api.py .
