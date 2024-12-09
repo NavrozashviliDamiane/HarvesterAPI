@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git && \
 
 # Copy the Flask WebSocket app file into the container
 WORKDIR /app
-COPY api.py /app
+COPY app.py /app
 
 # Expose the WebSocket port
 EXPOSE 5000
@@ -23,4 +23,4 @@ RUN useradd -m flaskuser
 USER flaskuser
 
 # Command to run the Flask WebSocket app
-ENTRYPOINT ["python3", "api.py"]
+ENTRYPOINT ["python3", "app.py"]

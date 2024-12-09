@@ -2,7 +2,12 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
+import eventlet
 
+# Monkey patch for asynchronous support
+eventlet.monkey_patch()
+
+# Initialize Flask and Flask-SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -32,4 +37,5 @@ def handle_start_scan(data):
     threading.Thread(target=run_scan, args=(domain, tool)).start()
 
 if __name__ == "__main__":
+    # Use eventlet to run the WebSocket server
     socketio.run(app, host="0.0.0.0", port=5000)
