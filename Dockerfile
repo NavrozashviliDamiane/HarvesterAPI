@@ -3,18 +3,24 @@ FROM python:3.10-slim
 # Set working directory for theHarvester
 WORKDIR /opt/theHarvester
 
-# Install required dependencies and clone theHarvester
-RUN apt-get update && apt-get install -y git && apt-get clean
-RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
-RUN pip install -r /opt/theHarvester/requirements.txt
-RUN pip install flask
+# Install dependencies, clone theHarvester, and clean up
+RUN apt-get update && apt-get install -y --no-install-recommends git && \
+    git clone https://github.com/laramies/theHarvester.git /opt/theHarvester && \
+    pip install --no-cache-dir -r /opt/theHarvester/requirements.txt && \
+    pip install --no-cache-dir flask flask-socketio eventlet && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy the Flask API file into the container
+# Copy the Flask WebSocket app file into the container
 WORKDIR /app
-COPY api.py /app
+COPY app.py /app
 
-# Expose the Flask API port
+# Expose the WebSocket port
 EXPOSE 5000
 
-# Command to run the Flask API
-ENTRYPOINT ["python3", "api.py"]
+# Add a non-root user for security
+RUN useradd -m flaskuser
+USER flaskuser
+
+# Command to run the Flask WebSocket app
+ENTRYPOINT ["python3", "app.py"]

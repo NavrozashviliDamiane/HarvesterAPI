@@ -1,44 +1,35 @@
-from flask import Flask, request, jsonify
+from flask import Flask
+from flask_socketio import SocketIO, emit
 import subprocess
 import threading
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Dictionary to store scan results by a unique ID
-results = {}
-
-def run_scan(scan_id, domain, tool):
+def run_scan(domain, tool):
+    """Execute theHarvester and emit the results."""
     try:
         result = subprocess.check_output(
             ['python', '/opt/theHarvester/theHarvester.py', '-d', domain, '-b', tool],
             text=True
         )
-        results[scan_id] = {"status": "success", "output": result}
+        # Emit the scan result to the WebSocket client
+        socketio.emit('scan_result', {"status": "completed", "domain": domain, "output": result})
     except Exception as e:
-        results[scan_id] = {"status": "error", "message": str(e)}
+        # Emit the error to the WebSocket client
+        socketio.emit('scan_result', {"status": "failed", "domain": domain, "error": str(e)})
 
-@app.route('/scan', methods=['POST'])
-def scan():
-    data = request.json
-    domain = data.get('domain')
-    tool = data.get('tool', 'all')
+@socketio.on('start_scan')
+def handle_start_scan(data):
+    """Handle incoming scan requests from the WebSocket client."""
+    domain = data.get("domain")
+    tool = data.get("tool", "all")
 
-    # Create a unique scan ID
-    scan_id = f"scan-{len(results) + 1}"
+    # Emit a processing status immediately
+    emit("scan_status", {"status": "processing", "domain": domain})
 
-    # Run the scan in a background thread
-    threading.Thread(target=run_scan, args=(scan_id, domain, tool)).start()
+    # Start the scan in a separate thread
+    threading.Thread(target=run_scan, args=(domain, tool)).start()
 
-    return jsonify({"status": "processing", "scan_id": scan_id})
-
-@app.route('/scan/<scan_id>', methods=['GET'])
-def get_scan(scan_id):
-    # Retrieve scan result
-    result = results.get(scan_id)
-    if result:
-        return jsonify(result)
-    else:
-        return jsonify({"status": "error", "message": "Scan not found"}), 404
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    socketio.run(app, host="0.0.0.0", port=5000)
