@@ -1,26 +1,25 @@
+# Use the official Python 3.10 slim image as the base
 FROM python:3.10-slim
 
-# Set working directory for theHarvester
-WORKDIR /opt/theHarvester
+# Set the working directory for the application
+WORKDIR /opt/myapp
 
-# Install dependencies, clone theHarvester, and clean up
-RUN apt-get update && apt-get install -y --no-install-recommends git && \
-    git clone https://github.com/laramies/theHarvester.git /opt/theHarvester && \
-    pip install --no-cache-dir -r /opt/theHarvester/requirements.txt && \
+# Install necessary system packages and Python dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
     pip install --no-cache-dir flask flask-socketio eventlet && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy the Flask WebSocket app file into the container
-WORKDIR /app
-COPY api.py /app
+# Copy the Flask WebSocket application file into the container
+COPY api.py .
 
-# Expose the WebSocket port
+# Expose the port for the application
 EXPOSE 5000
 
-# Add a non-root user for security
-RUN useradd -m flaskuser
-USER flaskuser
+# Create a non-root user for better security
+RUN useradd -m appuser
+USER appuser
 
-# Command to run the Flask WebSocket app
-ENTRYPOINT ["python3", "api.py"]
+# Command to run the application using Gunicorn
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "api:app"]

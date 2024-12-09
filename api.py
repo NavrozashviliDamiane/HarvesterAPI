@@ -35,6 +35,6 @@ def handle_start_scan(data):
     # Start the scan in a separate eventlet green thread
     eventlet.spawn(run_scan, domain, tool)
 
+# The entry point for Gunicorn
 if __name__ == "__main__":
-    # Use eventlet to run the WebSocket server
     socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
