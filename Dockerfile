@@ -21,6 +21,5 @@ EXPOSE 5000
 RUN useradd -m appuser
 USER appuser
 
-# Command to run the application using Gunicorn
-ENTRYPOINT ["gunicorn", "--worker-class", "eventlet", "--bind", "0.0.0.0:5000", "api:app"]
-
+# Command to run the application using Gunicorn, pointing to socketio
+ENTRYPOINT ["gunicorn", "--worker-class", "eventlet", "--bind", "0.0.0.0:5000", "api:socketio"]
