@@ -22,5 +22,5 @@ RUN useradd -m appuser
 USER appuser
 
 # Command to run the application using Gunicorn
-ENTRYPOINT ["gunicorn", "k", "--worker-class", "eventlet", "--bind", "0.0.0.0:5000", "api:app"]
+ENTRYPOINT ["gunicorn", "eventlet", "--bind", "0.0.0.0:5000", "api:app"]
 
