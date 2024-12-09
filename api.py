@@ -13,7 +13,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def run_scan(domain, tool):
     """Execute theHarvester and emit the results."""
     try:
-        socketio.emit('scan_status', {"status": "in_progress", "domain": domain})
         result = subprocess.check_output(
             ['python', '/opt/theHarvester/theHarvester.py', '-d', domain, '-b', tool],
             text=True
