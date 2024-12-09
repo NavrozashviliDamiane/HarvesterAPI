@@ -4,7 +4,7 @@ eventlet.monkey_patch()
 from flask import Flask
 from flask_socketio import SocketIO, emit
 import subprocess
-import os  # Import the os module
+import os
 
 # Initialize Flask and Flask-SocketIO
 app = Flask(__name__)
@@ -13,6 +13,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def run_scan(domain, tool):
     """Execute theHarvester and emit the results."""
     try:
+        socketio.emit('scan_status', {"status": "in_progress", "domain": domain})
         result = subprocess.check_output(
             ['python', '/opt/theHarvester/theHarvester.py', '-d', domain, '-b', tool],
             text=True
