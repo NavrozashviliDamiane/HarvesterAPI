@@ -7,15 +7,12 @@ WORKDIR /opt/myapp
 # Install necessary system packages and Python dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git && \
-    pip install --no-cache-dir flask flask-socketio eventlet gunicorn && \
+    pip install --no-cache-dir flask flask-socketio gevent gunicorn && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
+# Set Python environment variable
 ENV PYTHONUNBUFFERED=1
-
-# Or optionally, if you want to be explicit about monkey patching
-ENV EVENTLET_MONKEY_PATCH=1
 
 # Copy the Flask WebSocket application file into the container
 COPY api.py .
@@ -27,5 +24,5 @@ EXPOSE 5000
 RUN useradd -m appuser
 USER appuser
 
-# Command to run the application using Gunicorn
-ENTRYPOINT ["gunicorn", "--worker-class", "eventlet", "--bind", "0.0.0.0:5000", "api:app"]
+# Command to run the application using Gunicorn with gevent worker class
+ENTRYPOINT ["gunicorn", "--worker-class", "gevent", "--bind", "0.0.0.0:5000", "api:app"]

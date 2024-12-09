@@ -1,6 +1,5 @@
-# Import eventlet and monkey patch before any other imports
-import eventlet
-eventlet.monkey_patch()
+import gevent.monkey
+gevent.monkey.patch_all()
 
 from flask import Flask
 from flask_socketio import SocketIO, emit
@@ -33,8 +32,8 @@ def handle_start_scan(data):
     # Emit a processing status immediately
     emit("scan_status", {"status": "processing", "domain": domain})
 
-    # Start the scan in a separate eventlet green thread
-    eventlet.spawn(run_scan, domain, tool)
+    # Start the scan in a separate greenlet
+    gevent.spawn(run_scan, domain, tool)
 
 # The entry point for Gunicorn
 if __name__ == "__main__":
