@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 import subprocess
-import threading
 import eventlet
 
 # Monkey patch for asynchronous support
@@ -33,8 +32,8 @@ def handle_start_scan(data):
     # Emit a processing status immediately
     emit("scan_status", {"status": "processing", "domain": domain})
 
-    # Start the scan in a separate thread
-    threading.Thread(target=run_scan, args=(domain, tool)).start()
+    # Start the scan in a separate eventlet green thread
+    eventlet.spawn(run_scan, domain, tool)
 
 if __name__ == "__main__":
     # Use eventlet to run the WebSocket server
